@@ -1,8 +1,16 @@
 const express = require("express");
-const router = express.Router();
-const lectureController = require("../controllers/lectureController");
+const {
+  createLecture,
+  getAllLectures,
+  getLectureById,
+  deleteLecture,
+} = require("../controllers/lectureController");
+const { authMiddleware, isAdmin } = require("../middleware/authMiddleware");
 
-router.post("/", lectureController.createLecture);
-router.get("/:moduleId", lectureController.getLectures);
+const router = express.Router();
+router.post("/", createLecture);
+router.get("/", getAllLectures);
+router.get("/:id", getLectureById);
+router.delete("/:id", authMiddleware, isAdmin, deleteLecture);
 
 module.exports = router;

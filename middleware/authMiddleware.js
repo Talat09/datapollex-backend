@@ -12,5 +12,10 @@ const authMiddleware = (req, res, next) => {
     res.status(400).json({ message: "Invalid token", error });
   }
 };
-
-module.exports = authMiddleware;
+const isAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied. Admins only." });
+  }
+  next();
+};
+module.exports = { authMiddleware, isAdmin };

@@ -1,8 +1,11 @@
 const express = require("express");
-const router = express.Router();
-const moduleController = require("../controllers/moduleController");
+const { createModule, getAllModules, getModuleById, deleteModule } = require("../controllers/moduleController");
+const { authMiddleware, isAdmin } = require("../middleware/authMiddleware");
 
-router.post("/", moduleController.createModule);
-router.get("/:courseId", moduleController.getModules);
+const router = express.Router();
+router.post("/",  createModule);
+router.get("/", getAllModules);
+router.get("/:id", getModuleById);
+router.delete("/:id", authMiddleware, isAdmin, deleteModule);
 
 module.exports = router;

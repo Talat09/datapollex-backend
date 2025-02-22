@@ -14,10 +14,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/modules", moduleRoutes);
 app.use("/api/lectures", lectureRoutes);
-app.use("/api/auth", authRoutes);
 app.get("/", (req, res) => {
   res.send("Welcome to the e-learning API");
 });

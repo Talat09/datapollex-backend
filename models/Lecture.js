@@ -2,16 +2,17 @@ const mongoose = require("mongoose");
 
 const LectureSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
-    videoUrl: String,
-    pdfNotes: [String],
-    moduleId: {
+    module: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Module",
       required: true,
     },
+    title: { type: String, required: true },
+    videoUrl: { type: String },
+    content: { type: String },
+    position: { type: Number },
   },
   { timestamps: true }
 );
-
-module.exports = mongoose.model("Lecture", LectureSchema);
+const Lecture = mongoose.model("Lecture", LectureSchema);
+module.exports = Lecture

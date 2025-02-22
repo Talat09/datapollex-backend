@@ -1,70 +1,57 @@
-const Course = require("../models/Course.js");
-
-// @desc    Create a new course
-// @route   POST /api/courses
-const createCourse = async (req, res) => {
+const Course = require("../models/Course");
+exports.getAllCourses = async (req, res) => {
   try {
-    const { title, price, description, thumbnailUrl } = req.body;
+    const courses = await Course.find();
+    res.status(200).json(courses);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+exports.getCourseById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const course = await Course.findById(id);
 
-    if (!thumbnailUrl) {
-      return res.status(400).json({ message: "Thumbnail URL is required" });
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
     }
 
-    const newCourse = new Course({
+    res.status(200).json(course);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.createCourse = async (req, res) => {
+  try {
+    const { title, price, description, thumbnailUrl, instructor, category } =
+      req.body;
+    const course = new Course({
       title,
       price,
       description,
-      thumbnailUrl, // Only storing Cloudinary URL
+      thumbnailUrl,
+      instructor,
+      category,
     });
-
-    await newCourse.save();
-    res
-      .status(201)
-      .json({ message: "Course created successfully", course: newCourse });
+    await course.save();
+    res.status(201).json(course);
   } catch (error) {
-    console.error("Error creating course:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ error: error.message });
   }
 };
-
-// @desc    Get all courses
-// @route   GET /api/courses
-const getCourses = async (req, res) => {
+exports.deleteCourse = async (req, res) => {
   try {
-    const courses = await Course.find();
-    res.json(courses);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
+    const { id } = req.params;
+    const course = await Course.findById(id);
 
-// @desc    Get a single course by ID
-// @route   GET /api/courses/:id
-const getCourseById = async (req, res) => {
-  try {
-    const course = await Course.findById(req.params.id);
-    if (!course) return res.status(404).json({ message: "Course not found" });
-    res.json(course);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
 
-// @desc    Delete a course
-// @route   DELETE /api/courses/:id
-const deleteCourse = async (req, res) => {
-  try {
-    await Course.findByIdAndDelete(req.params.id);
-    res.json({ message: "Course deleted successfully" });
+    await Course.findByIdAndDelete(id);
+    res.status(200).json({ message: "Course deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ error: error.message });
   }
-};
-
-// Export all functions
-module.exports = {
-  createCourse,
-  getCourses,
-  getCourseById,
-  deleteCourse,
 };
